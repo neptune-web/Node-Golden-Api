@@ -1,0 +1,39 @@
+{
+  "name": "goldendao-event-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon --es-module-specifier-resolution=node index.js",
+    "start_worker": "nodemon --es-module-specifier-resolution=node src/bull/bull.js",
+    "test": "jest",
+    "lint": "eslint src/**",
+    "prettier": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jupiter0913/goldendao-event-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jupiter0913/goldendao-event-api/issues"
+  },
+  "homepage": "https://github.com/jupiter0913/goldendao-event-api#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "express-custom-error": "^1.9.4",
+    "express-validation": "^4.1.0",
+    "fs": "^0.0.1-security",
+    "helmet": "^5.1.0",
+    "http-status": "^1.5.2",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.16",
+    "path": "^0.12.7",
+    "rotating-file-stream": "^3.0.4"
+  }
+}

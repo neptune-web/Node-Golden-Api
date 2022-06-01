@@ -1,0 +1,18 @@
+# node_modules folder abd its files
+node_modules
+
+# environment files
+*.env
+
+# Editor folders
+.idea
+.vscode
+.DS_Store
+.prettierrc
+nft-service/yarn.lock
+
+pc
+log/
+log/access.log
+
+.vercel
