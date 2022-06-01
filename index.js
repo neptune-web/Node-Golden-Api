@@ -49,9 +49,9 @@ app.use("*", (req, res) => {
   res.status(404).json({ status: false, message: "Endpoint Not Found" });
 });
 
-const port = 3000;
+const port = 8085;
 
 // Open Server on selected Port
-app.listen(port, () => console.info("Server listening on port ", port));
+app.listen(process.env.PORT || 8085, () => console.info(`Server listening on port ${port}`));
 
 app.use(express.static("public"));
