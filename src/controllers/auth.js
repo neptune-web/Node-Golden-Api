@@ -2,10 +2,19 @@ const status = require("http-status");
 const has = require("has-keys");
 
 const userModel = require("../models/users.js");
+const verficationModel = require("../models/verfication");
 const { uuid } = require("uuidv4");
 
 var jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY, JWT_TOKEN_EXPIRATION } = process.env;
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require("twilio")(accountSid, authToken);
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
 
 module.exports = {
   async logIn(req, res) {
@@ -15,6 +24,24 @@ module.exports = {
     }
 
     const { phone } = req.body;
+
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += getRandomInt(10);
+    }
+
+    console.log(client);
+
+    await client.messages
+      .create({
+        body: code,
+        from: "+19784876717",
+        to: phone,
+      })
+      .then((message) => console.log(message.sid));
+
+    await verficationModel.createVerification(phone, code);
+
     res.json({
       status: status.OK,
       message: "PIN code is sent.",
@@ -27,7 +54,18 @@ module.exports = {
       return;
     }
 
-    const { phone } = req.body;
+    const { phone, pin } = req.body;
+
+    let code = await verficationModel.getVerificationCode(phone);
+    console.log("code=", code);
+    if (code !== pin) {
+      res.json({
+        verified_pin: false,
+        status: status.OK,
+      });
+      return;
+    }
+
     const user = await userModel.getUser(phone);
     console.log(user);
 
