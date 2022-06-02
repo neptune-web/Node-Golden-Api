@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const status = require("http-status");
 
-// const { JWT_SECRET_KEY } = process.env;
+const { JWT_SECRET_KEY } = process.env;
 
 function checkToken(req, res, next) {
   let token = req.headers["authorization"];
@@ -12,7 +12,7 @@ function checkToken(req, res, next) {
       token = token.slice(7, token.length);
     }
 
-    jwt.verify(token, "dev", (err, decoded) => {
+    jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
       if (err) {
         return res.json({
           status: status.BAD_REQUEST,
