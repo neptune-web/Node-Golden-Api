@@ -28,12 +28,16 @@
     "express-custom-error": "^1.9.4",
     "express-validation": "^4.1.0",
     "fs": "^0.0.1-security",
+    "has-keys": "^0.1.0",
     "helmet": "^5.1.0",
     "http-status": "^1.5.2",
     "jsonwebtoken": "^8.5.1",
+    "mandatoryenv": "^3.0.4",
     "morgan": "^1.10.0",
+    "mysqlm": "^2.0.6",
     "nodemon": "^2.0.16",
     "path": "^0.12.7",
-    "rotating-file-stream": "^3.0.4"
+    "rotating-file-stream": "^3.0.4",
+    "uuidv4": "^6.2.13"
   }
 }
