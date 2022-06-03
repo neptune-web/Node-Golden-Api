@@ -26,7 +26,7 @@ module.exports = {
     const { phone } = req.body;
 
     let code = "";
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 4; i++) {
       code += getRandomInt(10);
     }
 
