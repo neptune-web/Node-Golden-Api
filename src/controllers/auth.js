@@ -91,6 +91,7 @@ module.exports = {
       });
     } else {
       res.json({
+        verified_pin: true,
         user_exist: false,
         status: status.OK,
       });
