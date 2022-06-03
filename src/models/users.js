@@ -6,15 +6,13 @@ const users = {
     const user = await this.getUser(phone);
     if (user?.id) return user;
 
-    console.log(user_id, phone, wallet_address, nft_holder);
-
     await db.query(
       "INSERT INTO users(user_id, phone, wallet_address, nft_holder) VALUES(?, ?, ?, ?)",
       [user_id, phone, wallet_address, nft_holder]
     );
     return (
       await db.query(
-        "SELECT user_id, phone, wallet_address, nft_holder FROM users WHERE user_id = ?",
+        "SELECT user_id, phone, wallet_address FROM users WHERE user_id = ?",
         [user_id]
       )
     )[0];
@@ -23,7 +21,7 @@ const users = {
   async getUser(phone) {
     return (
       await db.query(
-        "SELECT user_id, phone, wallet_address, nft_holder FROM users WHERE phone = ?",
+        "SELECT user_id, phone, wallet_address FROM users WHERE phone = ?",
         [phone]
       )
     )[0];
@@ -36,7 +34,7 @@ const users = {
     ]);
     return (
       await db.query(
-        "SELECT user_id, phone, wallet_address, nft_holder FROM users WHERE phone = ?",
+        "SELECT user_id, phone, wallet_address FROM users WHERE phone = ?",
         [phone]
       )
     )[0];

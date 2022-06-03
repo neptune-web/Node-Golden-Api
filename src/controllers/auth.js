@@ -3,6 +3,8 @@ const has = require("has-keys");
 
 const userModel = require("../models/users.js");
 const verficationModel = require("../models/verfication");
+const nftHolderModel = require("../models/nft_holder.js");
+
 const { uuid } = require("uuidv4");
 
 const axios = require("axios");
@@ -18,8 +20,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-const verifyNFTHolder = async (wallet_address) => {
-  const opensea_link = "https://opensea.io/collection/goldendao";
+const verifyNFTHolder = async (wallet_address, opensea_link) => {
   const options = {
     method: "GET",
     url: "https://api.opensea.io/api/v1/assets",
@@ -116,20 +117,56 @@ module.exports = {
   },
 
   async verifyWalletAddress(req, res) {
-    if (!has(req.body, ["phone"]) && !has(req.body, ["wallet_address"])) {
-      res.status(status.BAD_REQUEST).json();
+    if (!has(req.body, ["phone"])) {
+      res.json({
+        message: "phone parameter is not defined",
+        status: status.BAD_REQUEST,
+      });
       return;
     }
-    const { phone, wallet_address } = req.body;
+    if (!has(req.body, ["wallet_address"])) {
+      res.json({
+        message: "wallet_address parameter is not defined",
+        status: status.BAD_REQUEST,
+      });
+      return;
+    }
+
+    if (!has(req.body, ["opensea_link"])) {
+      res.json({
+        message: "opensea_link parameter is not defined",
+        status: status.BAD_REQUEST,
+      });
+      return;
+    }
+    const { phone, wallet_address, opensea_link } = req.body;
     const user = await userModel.getUser(phone);
 
     if (user?.user_id) {
-      let nft_holder = (await verifyNFTHolder(wallet_address)) ? 1 : 0;
+      let holder_status = (await verifyNFTHolder(wallet_address, opensea_link))
+        ? 1
+        : 0;
+      let holders = await nftHolderModel.getNFTHolder(
+        wallet_address,
+        opensea_link
+      );
 
-      const user = await userModel.updateUser(phone, nft_holder);
+      let nft_holder;
+      if (holders.length > 0) {
+        nft_holder = await nftHolderModel.updateNFTHolder(
+          wallet_address,
+          holder_status
+        );
+      } else {
+        nft_holder = await nftHolderModel.createNFTHolder(
+          wallet_address,
+          opensea_link,
+          holder_status
+        );
+      }
 
       res.json({
-        nft_holder: user.nft_holder,
+        nft_holder: nft_holder,
         status: status.OK,
       });
     } else {
@@ -149,14 +186,9 @@ module.exports = {
     const userId = uuid();
     const { phone, wallet_address } = req.body;
 
-    let nft_holder = (await verifyNFTHolder(wallet_address)) ? 1 : 0;
+    // let nft_holder = (await verifyNFTHolder(wallet_address)) ? 1 : 0;
 
-    const user = await userModel.create(
-      userId,
-      phone,
-      wallet_address,
-      nft_holder
-    );
+    const user = await userModel.create(userId, phone, wallet_address, 0);
 
     if (user?.user_id) {
       const token = jwt.sign(
