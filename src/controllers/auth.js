@@ -29,7 +29,7 @@ module.exports = {
     for (let i = 0; i < 4; i++) {
       code += getRandomInt(10);
     }
-
+    code = "Ozone verification code is: " + code;
     console.log(client);
 
     await client.messages
