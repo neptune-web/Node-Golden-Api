@@ -2,8 +2,6 @@ const db = require("./database.js");
 
 const events = {
   async createVerification(phone, code) {
-    console.log(phone, code);
-
     await db.query("DELETE from verification WHERE phone=?", [phone]);
 
     await db.query("INSERT INTO verification(phone, code) VALUES(?, ?)", [

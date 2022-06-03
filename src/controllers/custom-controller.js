@@ -6,8 +6,6 @@ module.exports = {
   async verifyOwnership(req, res) {
     try {
       let { opensea_link, metamask_address } = req.body;
-      console.log(opensea_link);
-      console.log(metamask_address);
       const options = {
         method: "GET",
         url: "https://api.opensea.io/api/v1/assets",

@@ -9,6 +9,11 @@ const axios = require("axios");
 //var jwt = require("jsonwebtoken");
 //const { JWT_SECRET_KEY } = process.env;
 var QRCode = require("qrcode");
+const events = require("../models/events.js");
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
 
 const verifyNFTHolder = async (wallet_address, opensea_link) => {
   const options = {
@@ -29,14 +34,35 @@ const verifyNFTHolder = async (wallet_address, opensea_link) => {
 
 module.exports = {
   async createEvent(req, res) {
-    const { user_id, code, name, link, date } = req.body;
+    const { user_id, name, link, date } = req.body;
     //let token = req.headers["authorization"];
     //let decoded = jwt.verify(token, JWT_SECRET_KEY);
     let userId = user_id;
     let qrcode = await QRCode.toDataURL(name);
+
+    let events;
+    let event_code = "",
+      host_code = "";
+    do {
+      event_code = "";
+      for (let i = 0; i < 5; i++) {
+        event_code += getRandomInt(10);
+      }
+      events = await eventModel.getEventByEventCode(event_code);
+    } while (events.length > 0);
+
+    do {
+      host_code = "";
+      for (let i = 0; i < 5; i++) {
+        host_code += getRandomInt(10);
+      }
+      events = await eventModel.getEventByHostCode(host_code);
+    } while (events.length > 0);
+
     const event = await eventModel.createEvent(
       userId,
-      code,
+      event_code,
+      host_code,
       name,
       link,
       qrcode,
@@ -50,28 +76,36 @@ module.exports = {
   },
 
   async joinEvent(req, res) {
-    if (!has(req.body, ["phone"]) && !has(req.body, ["wallet_address"])) {
+    // if (!has(req.body, ["wallet_address"])) {
+    //   res.status(status.BAD_REQUEST).json();
+    //   return;
+    // }
+
+    if (!has(req.body, ["event_code"]) && !has(req.body, ["host_code"])) {
       res.status(status.BAD_REQUEST).json();
       return;
     }
-    const { code, wallet_address } = req.body;
 
-    const events = await eventModel.getAllEvents();
-    let verified_code = false;
-    for (let i = 0; i < events.length; i++) {
-      let event = events[i];
-      if (event.code === code) {
-        verified_code = true;
-        break;
+    const { event_code, host_code, wallet_address } = req.body;
+
+    let events = await eventModel.getEventByEventCode(event_code);
+    if (events.length === 0) {
+      if (host_code === undefined) {
+        res.json({
+          event_code: "Event code is invalid",
+          status: status.OK,
+        });
+        return;
+      } else {
+        events = await eventModel.getEventByHostCode(host_code);
+        if (events.length === 0) {
+          res.json({
+            event_code: "Host code is invalid",
+            status: status.OK,
+          });
+          return;
+        }
       }
-    }
-
-    if (!verified_code) {
-      res.json({
-        event_code: "Event code is invalid",
-        status: status.OK,
-      });
-      return;
     }
 
     for (let i = 0; i < events.length; i++) {
@@ -93,7 +127,7 @@ module.exports = {
     }
 
     res.json({
-      event_code: "Event code is valid",
+      event_code: "Code is OK",
       status: status.OK,
     });
   },
