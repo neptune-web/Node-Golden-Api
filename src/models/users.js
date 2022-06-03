@@ -30,7 +30,7 @@ const users = {
   },
 
   async updateUser(phone, nft_holder) {
-    await db.query("UPDATE users SET nft_hoder = ? WHERE phone = ?", [
+    await db.query("UPDATE users SET nft_holder = ? WHERE phone = ?", [
       nft_holder,
       phone,
     ]);

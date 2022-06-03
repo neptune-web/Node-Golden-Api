@@ -33,7 +33,6 @@ const verifyNFTHolder = async (wallet_address) => {
     },
   };
   const response = await axios.request(options);
-
   return response.data.assets.length > 0;
 };
 
@@ -121,16 +120,16 @@ module.exports = {
       res.status(status.BAD_REQUEST).json();
       return;
     }
-    const { phone } = req.body;
+    const { phone, wallet_address } = req.body;
     const user = await userModel.getUser(phone);
 
     if (user?.user_id) {
-      let nft_holder = verifyNFTHolder(wallet_address) ? 1 : 0;
+      let nft_holder = (await verifyNFTHolder(wallet_address)) ? 1 : 0;
 
       const user = await userModel.updateUser(phone, nft_holder);
 
       res.json({
-        user: user,
+        nft_holder: user.nft_holder,
         status: status.OK,
       });
     } else {
@@ -150,7 +149,7 @@ module.exports = {
     const userId = uuid();
     const { phone, wallet_address } = req.body;
 
-    let nft_holder = verifyNFTHolder(wallet_address) ? 1 : 0;
+    let nft_holder = (await verifyNFTHolder(wallet_address)) ? 1 : 0;
 
     const user = await userModel.create(
       userId,

@@ -16,5 +16,6 @@ router.post(
   validate(authValidator.signUp, {}, {}),
   auth.signUp
 );
+router.post("/api/auth/verifyWalletAddress", auth.verifyWalletAddress);
 
 module.exports = router;
