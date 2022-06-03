@@ -18,6 +18,25 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
+const verifyNFTHolder = async (wallet_address) => {
+  const opensea_link = "https://opensea.io/collection/goldendao";
+  const options = {
+    method: "GET",
+    url: "https://api.opensea.io/api/v1/assets",
+    params: {
+      owner: wallet_address,
+      collection_slug: opensea_link.slice(30),
+    },
+    headers: {
+      Accept: "application/json",
+      "X-API-KEY": "2f6f419a083c46de9d83ce3dbe7db601",
+    },
+  };
+  const response = await axios.request(options);
+
+  return response.data.assets.length > 0;
+};
+
 module.exports = {
   async logIn(req, res) {
     if (!has(req.body, ["phone"])) {
@@ -31,12 +50,10 @@ module.exports = {
     for (let i = 0; i < 4; i++) {
       code += getRandomInt(10);
     }
-    code = "Ozone verification code is: " + code;
-    console.log(client);
 
     await client.messages
       .create({
-        body: code,
+        body: "Ozone verification code is: " + code,
         from: process.env.TWILIO_PHONE,
         to: phone,
       })
@@ -59,7 +76,7 @@ module.exports = {
     const { phone, pin } = req.body;
 
     let code = await verficationModel.getVerificationCode(phone);
-    console.log("code=", code);
+
     if (code !== pin) {
       res.json({
         verified_pin: false,
@@ -69,7 +86,6 @@ module.exports = {
     }
 
     const user = await userModel.getUser(phone);
-    console.log(user);
 
     if (user?.user_id) {
       const token = jwt.sign(
@@ -100,6 +116,31 @@ module.exports = {
     }
   },
 
+  async verifyWalletAddress(req, res) {
+    if (!has(req.body, ["phone"]) && !has(req.body, ["wallet_address"])) {
+      res.status(status.BAD_REQUEST).json();
+      return;
+    }
+    const { phone } = req.body;
+    const user = await userModel.getUser(phone);
+
+    if (user?.user_id) {
+      let nft_holder = verifyNFTHolder(wallet_address) ? 1 : 0;
+
+      const user = await userModel.updateUser(phone, nft_holder);
+
+      res.json({
+        user: user,
+        status: status.OK,
+      });
+    } else {
+      res.json({
+        message: "User is not exist",
+        status: status.OK,
+      });
+    }
+  },
+
   async signUp(req, res) {
     if (!has(req.body, ["phone"]) && !has(req.body, ["wallet_address"])) {
       res.status(status.BAD_REQUEST).json();
@@ -108,26 +149,8 @@ module.exports = {
 
     const userId = uuid();
     const { phone, wallet_address } = req.body;
-    const opensea_link = "https://opensea.io/collection/goldendao";
-    const options = {
-      method: "GET",
-      url: "https://api.opensea.io/api/v1/assets",
-      params: {
-        owner: wallet_address,
-        collection_slug: opensea_link.slice(30),
-      },
-      headers: {
-        Accept: "application/json",
-        "X-API-KEY": "2f6f419a083c46de9d83ce3dbe7db601",
-      },
-    };
-    const response = await axios.request(options);
 
-    let nft_holder = 0;
-
-    if (response.data.assets.length !== 0) {
-      nft_holder = 1;
-    }
+    let nft_holder = verifyNFTHolder(wallet_address) ? 1 : 0;
 
     const user = await userModel.create(
       userId,

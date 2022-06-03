@@ -28,6 +28,19 @@ const users = {
       )
     )[0];
   },
+
+  async updateUser(phone, nft_holder) {
+    await db.query("UPDATE users SET nft_hoder = ? WHERE phone = ?", [
+      nft_holder,
+      phone,
+    ]);
+    return (
+      await db.query(
+        "SELECT user_id, phone, wallet_address, nft_holder FROM users WHERE phone = ?",
+        [phone]
+      )
+    )[0];
+  },
 };
 
 module.exports = users;
