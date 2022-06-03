@@ -15,6 +15,13 @@ const events = {
       )
     )[0];
   },
+
+  async getEvents(user_id) {
+    return await db.query(
+      "SELECT user_id, code, name, link, date FROM events WHERE user_id = ?",
+      [user_id]
+    );
+  },
 };
 
 module.exports = events;
