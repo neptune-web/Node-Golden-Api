@@ -39,4 +39,15 @@ module.exports = {
       events: events,
     });
   },
+
+  async getEventById(req, res) {
+    const { event_id } = req.body;
+    let eventId = event_id;
+
+    const event = await eventModel.getEventById(eventId);
+    res.json({
+      status: status.OK,
+      event: event ?? null,
+    });
+  },
 };

@@ -22,6 +22,16 @@ const events = {
       [user_id]
     );
   },
+
+  async getEventById(event_id) {
+    console.log(event_id);
+    return (
+      await db.query(
+        "SELECT id, user_id, code, name, link, qrcode, date FROM events WHERE id = ?",
+        [event_id]
+      )
+    )[0];
+  },
 };
 
 module.exports = events;
