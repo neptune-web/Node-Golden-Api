@@ -4,8 +4,9 @@ const has = require("has-keys");
 const eventModel = require("../models/events.js");
 const { uuid } = require("uuidv4");
 
-var jwt = require("jsonwebtoken");
-const { JWT_SECRET_KEY } = process.env;
+//var jwt = require("jsonwebtoken");
+//const { JWT_SECRET_KEY } = process.env;
+var QRCode = require("qrcode");
 
 module.exports = {
   async createEvent(req, res) {
@@ -13,7 +14,16 @@ module.exports = {
     //let token = req.headers["authorization"];
     //let decoded = jwt.verify(token, JWT_SECRET_KEY);
     let userId = user_id;
-    const event = await eventModel.createEvent(userId, code, name, link, date);
+    let qrcode = await QRCode.toDataURL(name);
+    const event = await eventModel.createEvent(
+      userId,
+      code,
+      name,
+      link,
+      qrcode,
+      date
+    );
+
     res.json({
       status: status.OK,
       event: event,

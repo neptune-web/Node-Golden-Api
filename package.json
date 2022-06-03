@@ -37,6 +37,7 @@
     "mysqlm": "^2.0.6",
     "nodemon": "^2.0.16",
     "path": "^0.12.7",
+    "qrcode": "^1.5.0",
     "rotating-file-stream": "^3.0.4",
     "twilio": "^3.77.2",
     "uuidv4": "^6.2.13"
