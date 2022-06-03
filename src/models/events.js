@@ -18,7 +18,7 @@ const events = {
 
   async getEvents(user_id) {
     return await db.query(
-      "SELECT user_id, code, name, link, date FROM events WHERE user_id = ?",
+      "SELECT id, user_id, code, name, link, qrcode, date FROM events WHERE user_id = ?",
       [user_id]
     );
   },
