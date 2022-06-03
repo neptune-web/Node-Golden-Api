@@ -75,6 +75,28 @@ module.exports = {
     });
   },
 
+  async redeemEvent(req, res) {
+    if (!has(req.body, ["event_id"])) {
+      res.status(status.BAD_REQUEST).json();
+      return;
+    }
+
+    const { event_id } = req.body;
+
+    let events = await eventModel.redeemEvent(event_id);
+    if (events.length > 0)
+      res.json({
+        event: events[0],
+        status: status.OK,
+      });
+    else
+      res.json({
+        message: "Failed to redeem event",
+        status: status.OK,
+      });
+    return;
+  },
+
   async joinEvent(req, res) {
     // if (!has(req.body, ["wallet_address"])) {
     //   res.status(status.BAD_REQUEST).json();

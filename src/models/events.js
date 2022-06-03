@@ -50,6 +50,12 @@ const events = {
       [host_code]
     );
   },
+
+  async redeemEvent(event_id) {
+    console.log(event_id);
+    await db.query("UPDATE events SET redeemed = 1 WHERE id = ?", [event_id]);
+    return await db.query("SELECT * FROM events WHERE id = ?", [event_id]);
+  },
 };
 
 module.exports = events;
