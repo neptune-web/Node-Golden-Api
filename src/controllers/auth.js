@@ -5,6 +5,8 @@ const userModel = require("../models/users.js");
 const verficationModel = require("../models/verfication");
 const { uuid } = require("uuidv4");
 
+const axios = require("axios");
+
 var jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY, JWT_TOKEN_EXPIRATION } = process.env;
 
@@ -106,7 +108,33 @@ module.exports = {
 
     const userId = uuid();
     const { phone, wallet_address } = req.body;
-    const user = await userModel.create(userId, phone, wallet_address);
+    const opensea_link = "https://opensea.io/collection/goldendao";
+    const options = {
+      method: "GET",
+      url: "https://api.opensea.io/api/v1/assets",
+      params: {
+        owner: wallet_address,
+        collection_slug: opensea_link.slice(30),
+      },
+      headers: {
+        Accept: "application/json",
+        "X-API-KEY": "2f6f419a083c46de9d83ce3dbe7db601",
+      },
+    };
+    const response = await axios.request(options);
+
+    let nft_holder = 0;
+
+    if (response.data.assets.length !== 0) {
+      nft_holder = 1;
+    }
+
+    const user = await userModel.create(
+      userId,
+      phone,
+      wallet_address,
+      nft_holder
+    );
 
     if (user?.user_id) {
       const token = jwt.sign(
