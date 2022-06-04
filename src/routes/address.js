@@ -9,5 +9,5 @@ router.post(
   checkToken,
   address.addWalletAddress
 );
-
+router.post("/api/address/selectAddress", checkToken, address.selectAddress);
 module.exports = router;

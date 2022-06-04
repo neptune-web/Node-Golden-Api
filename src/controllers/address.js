@@ -22,6 +22,36 @@ module.exports = {
     });
   },
 
+  async selectAddress(req, res) {
+    if (!has(req.body, ["user_id"])) {
+      res.json({
+        message: "user_id parameter is undefined",
+        status: status.OK,
+      });
+      return;
+    }
+
+    if (!has(req.body, ["wallet_address"])) {
+      res.json({
+        message: "wallet_address parameter is undefined",
+        status: status.OK,
+      });
+      return;
+    }
+
+    const { user_id, wallet_address } = req.body;
+
+    let user = await addressModel.selectAddress(user_id, wallet_address);
+    let new_user = { ...user };
+    delete new_user["nft_holder"];
+    new_user["nft_holder"] = user.nft_holder === 1;
+
+    res.json({
+      user: new_user,
+      status: status.OK,
+    });
+  },
+
   async addWalletAddress(req, res) {
     if (!has(req.body, ["user_id"])) {
       res.json({
@@ -49,6 +79,7 @@ module.exports = {
       });
       return;
     }
+
     let address = await addressModel.createAddress(user_id, wallet_address);
 
     res.json({

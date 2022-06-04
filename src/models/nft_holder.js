@@ -30,7 +30,6 @@ const nft_holders = {
   },
 
   async getNFTHolder(wallet_address, opensea_link) {
-    console.log(wallet_address, opensea_link);
     return await db.query(
       "SELECT * FROM nft_holder WHERE wallet_address = ? AND opensea_link = ?",
       [wallet_address, opensea_link]

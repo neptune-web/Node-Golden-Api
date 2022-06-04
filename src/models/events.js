@@ -59,13 +59,11 @@ const events = {
   },
 
   async redeemEvent(event_id) {
-    console.log(event_id);
     await db.query("UPDATE events SET redeemed = 1 WHERE id = ?", [event_id]);
     return await db.query("SELECT * FROM events WHERE id = ?", [event_id]);
   },
 
   async joinEvent(user_id, event_id) {
-    console.log(user_id, event_id);
     let events = await db.query(
       "SELECT * FROM joined_event WHERE user_id = ? AND event_id = ?",
       [user_id, event_id]

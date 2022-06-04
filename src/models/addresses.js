@@ -28,6 +28,27 @@ const addresses = {
       user_id,
     ]);
   },
+
+  async selectAddress(user_id, wallet_address) {
+    let address = (
+      await db.query(
+        "SELECT * FROM addresses WHERE user_id = ? AND wallet_address = ?",
+        [user_id, wallet_address]
+      )
+    )[0];
+
+    await db.query("UPDATE users SET wallet_address = ? WHERE user_id = ?", [
+      address.id,
+      user_id,
+    ]);
+
+    return (
+      await db.query(
+        "SELECT users.*, addresses.wallet_address FROM users INNER JOIN addresses ON users.user_id = addresses.user_id WHERE users.user_id = ?",
+        [user_id]
+      )
+    )[0];
+  },
 };
 
 module.exports = addresses;
