@@ -110,6 +110,7 @@ module.exports = {
       new_user["nft_hoder"] = user["nft_holder"] === 1;
 
       res.json({
+        verified_pin: true,
         user_exist: true,
         status: status.OK,
         token: token,

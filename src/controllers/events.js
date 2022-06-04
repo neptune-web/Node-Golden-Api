@@ -108,19 +108,23 @@ module.exports = {
   },
 
   async joinEvent(req, res) {
-    // if (!has(req.body, ["wallet_address"])) {
-    //   res.status(status.BAD_REQUEST).json();
-    //   return;
-    // }
+    if (!has(req.body, ["user_id"])) {
+      res.json({
+        event_code: "user_id parameter is undefined",
+        status: status.BAD_REQUEST,
+      });
+      return;
+    }
 
     if (!has(req.body, ["event_code"]) && !has(req.body, ["host_code"])) {
       res.status(status.BAD_REQUEST).json();
       return;
     }
 
-    const { event_code, host_code, wallet_address } = req.body;
+    const { user_id, event_code, host_code, wallet_address } = req.body;
 
     let events = await eventModel.getEventByEventCode(event_code);
+
     if (events.length === 0) {
       if (host_code === undefined) {
         res.json({
@@ -139,6 +143,9 @@ module.exports = {
         }
       }
     }
+
+    let event = events[0];
+    await eventModel.joinEvent(user_id, event.id);
 
     for (let i = 0; i < events.length; i++) {
       let event = events[i];
@@ -184,10 +191,64 @@ module.exports = {
       );
 
       if (holders.length === 0) {
-        new_event = { ...event, verified: 0 };
+        new_event = { ...event, verified: false };
+        delete event["redeemed"];
+        new_event["redeemed"] = event["redeemed"] === 1;
       } else {
         let holder = holders[0];
-        new_event = { ...event, verified: holder.holder_status };
+        new_event = { ...event, verified: holder.holder_status === 1 };
+        delete event["redeemed"];
+        new_event["redeemed"] = event["redeemed"] === 1;
+      }
+
+      new_events.push(new_event);
+    }
+
+    res.json({
+      events: new_events,
+      status: status.OK,
+    });
+  },
+
+  async getEventsByNFTHolder(req, res) {
+    if (!has(req.body, ["user_id"])) {
+      res.json({
+        message: "user_id is undefined",
+        status: status.BAD_REQUEST,
+      });
+    }
+
+    if (!has(req.body, ["wallet_address"])) {
+      res.json({
+        message: "wallet_address is undefined",
+        status: status.BAD_REQUEST,
+      });
+    }
+
+    const { user_id, wallet_address } = req.body;
+
+    let new_events = [];
+
+    const events = await eventModel.getEventsByNFTHolder(user_id);
+
+    for (let i = 0; i < events.length; i++) {
+      let event = events[i];
+      let new_event;
+      let opensea_link = event.link;
+      const holders = await nftHolderModel.getNFTHolder(
+        wallet_address,
+        opensea_link
+      );
+
+      if (holders.length === 0) {
+        new_event = { ...event, verified: false };
+        delete event["redeemed"];
+        new_event["redeemed"] = event["redeemed"] === 1;
+      } else {
+        let holder = holders[0];
+        new_event = { ...event, verified: holder.holder_status === 1 };
+        delete event["redeemed"];
+        new_event["redeemed"] = event["redeemed"] === 1;
       }
 
       new_events.push(new_event);

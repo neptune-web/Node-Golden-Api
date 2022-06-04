@@ -44,6 +44,13 @@ const events = {
     );
   },
 
+  async getEventsByUserId(user_id) {
+    return await db.query(
+      "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE user_id = ?",
+      [user_id]
+    );
+  },
+
   async getEventByHostCode(host_code) {
     return await db.query(
       "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE host_code = ?",
@@ -55,6 +62,27 @@ const events = {
     console.log(event_id);
     await db.query("UPDATE events SET redeemed = 1 WHERE id = ?", [event_id]);
     return await db.query("SELECT * FROM events WHERE id = ?", [event_id]);
+  },
+
+  async joinEvent(user_id, event_id) {
+    console.log(user_id, event_id);
+    let events = await db.query(
+      "SELECT * FROM joined_event WHERE user_id = ? AND event_id = ?",
+      [user_id, event_id]
+    );
+    if (events.length === 0) {
+      await db.query(
+        "INSERT INTO joined_event(user_id, event_id) VALUES(?, ?)",
+        [user_id, event_id]
+      );
+    }
+  },
+
+  async getEventsByNFTHolder(user_id) {
+    return await db.query(
+      "SELECT `events`.* FROM joined_event INNER JOIN `events` ON joined_event.event_id = `events`.id WHERE joined_event.user_id = ?",
+      [user_id]
+    );
   },
 };
 
