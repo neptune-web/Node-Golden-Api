@@ -2,6 +2,7 @@ const status = require("http-status");
 const has = require("has-keys");
 
 const userModel = require("../models/users.js");
+const addressesModel = require("../models/addresses.js");
 const verficationModel = require("../models/verfication");
 const nftHolderModel = require("../models/nft_holder.js");
 
@@ -85,7 +86,7 @@ module.exports = {
       return;
     }
 
-    const user = await userModel.getUser(phone);
+    const user = await userModel.getUserByPhone(phone);
 
     if (user?.user_id) {
       const token = jwt.sign(
@@ -187,10 +188,34 @@ module.exports = {
     const { phone, wallet_address } = req.body;
 
     // let nft_holder = (await verifyNFTHolder(wallet_address)) ? 1 : 0;
+    let existingUser = await userModel.getUser(phone);
+    let user;
 
-    const user = await userModel.create(userId, phone, wallet_address, 0);
+    if (existingUser?.user_id) user = existingUser;
+    else {
+      user = await userModel.create(userId, phone, wallet_address, 0);
+    }
 
     if (user?.user_id) {
+      let userId = user?.user_id;
+      let existingAddress = await addressesModel.getAddress(
+        userId,
+        wallet_address
+      );
+
+      let addressId;
+      if (existingAddress?.id) {
+        addressId = existingAddress.id;
+      } else {
+        let address = await addressesModel.createAddress(
+          user?.user_id,
+          wallet_address
+        );
+        addressId = address.id;
+      }
+
+      user = await userModel.updateUserAddress(userId, addressId);
+
       const token = jwt.sign(
         {
           uid: user.user_id,
