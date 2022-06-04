@@ -70,7 +70,7 @@ module.exports = {
     );
 
     let new_event = { ...event };
-    delete event["redeemed"];
+    delete new_event["redeemed"];
     new_event["redeemed"] = event["redeemed"] === 1;
 
     res.json({
@@ -91,7 +91,7 @@ module.exports = {
     let event = events[0];
 
     let new_event = { ...event };
-    delete event["redeemed"];
+    delete new_event["redeemed"];
     new_event["redeemed"] = event["redeemed"] === 1;
 
     if (events.length > 0)
@@ -276,7 +276,7 @@ module.exports = {
 
     const event = await eventModel.getEventById(eventId);
     let new_event = { ...event };
-    delete event["redeemed"];
+    delete new_event["redeemed"];
     new_event["redeemed"] = event["redeemed"] === 1;
 
     res.json({
