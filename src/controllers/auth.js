@@ -193,7 +193,7 @@ module.exports = {
 
     if (existingUser?.user_id) user = existingUser;
     else {
-      user = await userModel.create(userId, phone, wallet_address, 0);
+      user = await userModel.create(userId, phone, 0, 0);
     }
 
     if (user?.user_id) {
