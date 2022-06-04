@@ -22,6 +22,10 @@ const events = {
       return "0";
     }
   },
+
+  async removeVerification(phone) {
+    await db.query("DELETE from verification WHERE phone=?", [phone]);
+  },
 };
 
 module.exports = events;

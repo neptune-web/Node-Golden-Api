@@ -102,6 +102,9 @@ module.exports = {
           expiresIn: JWT_TOKEN_EXPIRATION,
         }
       );
+
+      await verficationModel.removeVerification(phone);
+
       res.json({
         user_exist: true,
         status: status.OK,
