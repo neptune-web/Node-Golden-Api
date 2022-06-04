@@ -22,6 +22,12 @@ const addresses = {
       )
     )[0];
   },
+
+  async getAddresses(user_id) {
+    return await db.query("SELECT * FROM addresses WHERE user_id = ?", [
+      user_id,
+    ]);
+  },
 };
 
 module.exports = addresses;
