@@ -69,9 +69,13 @@ module.exports = {
       date
     );
 
+    let new_event = { ...event };
+    delete event["redeemed"];
+    new_event["redeemed"] = event["redeemed"] === 1;
+
     res.json({
       status: status.OK,
-      event: event,
+      event: new_event,
     });
   },
 
@@ -84,9 +88,15 @@ module.exports = {
     const { event_id } = req.body;
 
     let events = await eventModel.redeemEvent(event_id);
+    let event = events[0];
+
+    let new_event = { ...event };
+    delete event["redeemed"];
+    new_event["redeemed"] = event["redeemed"] === 1;
+
     if (events.length > 0)
       res.json({
-        event: events[0],
+        event: new_event,
         status: status.OK,
       });
     else
@@ -204,9 +214,13 @@ module.exports = {
     let eventId = event_id;
 
     const event = await eventModel.getEventById(eventId);
+    let new_event = { ...event };
+    delete event["redeemed"];
+    new_event["redeemed"] = event["redeemed"] === 1;
+
     res.json({
       status: status.OK,
-      event: event ?? null,
+      event: new_event ?? null,
     });
   },
 };

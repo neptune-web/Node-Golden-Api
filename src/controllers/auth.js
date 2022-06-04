@@ -105,11 +105,15 @@ module.exports = {
 
       await verficationModel.removeVerification(phone);
 
+      let new_user = { ...user };
+      delete new_user["nft_holder"];
+      new_user["nft_hoder"] = user["nft_holder"] === 1;
+
       res.json({
         user_exist: true,
         status: status.OK,
         token: token,
-        user: user,
+        user: new_user,
       });
     } else {
       res.json({
@@ -232,11 +236,16 @@ module.exports = {
           expiresIn: JWT_TOKEN_EXPIRATION,
         }
       );
+
+      let new_user = { ...user };
+      delete new_user["nft_holder"];
+      new_user["nft_hoder"] = user["nft_holder"] === 1;
+
       res.json({
         user_exist: true,
         status: status.OK,
         token: token,
-        user: user,
+        user: new_user,
       });
     } else {
       res.json({
