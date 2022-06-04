@@ -3,6 +3,7 @@ const router = express.Router();
 const { validate } = require("express-validation");
 
 const auth = require("../controllers/auth.js");
+
 const authValidator = require("../validators/auth-validator");
 const { checkToken } = require("../middlewares/authMiddleware");
 
@@ -22,5 +23,7 @@ router.post(
   checkToken,
   auth.verifyWalletAddress
 );
+
+router.post("/api/auth/getUserByPhone", auth.getUserByPhone);
 
 module.exports = router;

@@ -63,9 +63,54 @@ module.exports = {
     await verficationModel.createVerification(phone, code);
 
     res.json({
-      status: status.OK,
       message: "PIN code is sent.",
+      status: status.OK,
     });
+  },
+
+  async getUserByPhone(req, res) {
+    if (!has(req.body, ["phone"])) {
+      res.json({
+        message: "phone is undefined.",
+        status: status.OK,
+      });
+      return;
+    }
+
+    const { phone } = req.body;
+
+    const user = await userModel.getUserByPhone(phone);
+    if (user?.user_id) {
+      const token = jwt.sign(
+        {
+          uid: user.user_id,
+          userData: {
+            userId: user.user_id,
+            walletAddress: user.wallet_address,
+          },
+        },
+        JWT_SECRET_KEY,
+        {
+          expiresIn: JWT_TOKEN_EXPIRATION,
+        }
+      );
+
+      let new_user = { ...user };
+      delete new_user["nft_holder"];
+      new_user["nft_hoder"] = user["nft_holder"] === 1;
+
+      res.json({
+        user_exist: true,
+        token: token,
+        user: new_user,
+        status: status.OK,
+      });
+    } else {
+      res.json({
+        user_exist: false,
+        status: status.OK,
+      });
+    }
   },
 
   async verifyOPT(req, res) {
