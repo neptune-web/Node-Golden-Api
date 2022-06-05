@@ -78,8 +78,8 @@ const events = {
 
   async getEventsByNFTHolder(user_id) {
     return await db.query(
-      "SELECT `events`.* FROM joined_event INNER JOIN `events` ON joined_event.event_id = `events`.id WHERE joined_event.user_id = ?",
-      [user_id]
+      "SELECT `events`.* FROM joined_event INNER JOIN `events` ON joined_event.event_id = `events`.id WHERE joined_event.user_id = ? OR `events`.id = ? ORDER By `events`.id DESC",
+      [user_id, user_id]
     );
   },
 };

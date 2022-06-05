@@ -177,15 +177,29 @@ module.exports = {
   },
 
   async getAllEvents(req, res) {
-    if (!has(req.body, ["wallet_address"])) {
-      res.status(status.BAD_REQUEST).json();
+    if (!has(req.body, ["user_id"])) {
+      res.json({
+        message: "user_id is undefined",
+        status: status.BAD_REQUEST,
+      });
       return;
     }
-    const { wallet_address } = req.body;
+
+    if (!has(req.body, ["wallet_address"])) {
+      res.json({
+        message: "wallet_address is undefined",
+        status: status.BAD_REQUEST,
+      });
+      return;
+    }
+
+    const { user_id, wallet_address } = req.body;
 
     let new_events = [];
 
-    const events = await eventModel.getAllEvents();
+    const events = await eventModel.getEventsByNFTHolder(user_id);
+    console.log(events);
+
     for (let i = 0; i < events.length; i++) {
       let event = events[i];
       let new_event;
@@ -206,6 +220,11 @@ module.exports = {
         new_event["redeemed"] = event["redeemed"] === 1;
       }
 
+      if (event.user_id === user_id) {
+        new_event["invited"] = false;
+      } else {
+        new_event["invited"] = true;
+      }
       new_events.push(new_event);
     }
 
@@ -265,15 +284,15 @@ module.exports = {
     });
   },
 
-  async getEvents(req, res) {
-    const { user_id } = req.body;
-    let userId = user_id;
-    const events = await eventModel.getEvents(userId);
-    res.json({
-      status: status.OK,
-      events: events,
-    });
-  },
+  // async getEvents(req, res) {
+  //   const { user_id } = req.body;
+  //   let userId = user_id;
+  //   const events = await eventModel.getEvents(userId);
+  //   res.json({
+  //     status: status.OK,
+  //     events: events,
+  //   });
+  // },
 
   async getEventById(req, res) {
     const { event_id } = req.body;
