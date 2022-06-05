@@ -59,7 +59,7 @@ module.exports = {
       events = await eventModel.getEventByHostCode(host_code);
     } while (events.length > 0);
 
-    events = await eventModel.createEvent(
+    const event = await eventModel.createEvent(
       userId,
       event_code,
       host_code,
@@ -69,19 +69,13 @@ module.exports = {
       date
     );
 
-    let new_events = [];
-
-    for (let i = 0; i < events.length; i++) {
-      let event = events[i];
-      let new_event = { ...event };
-      delete new_event["redeemed"];
-      new_event["redeemed"] = event["redeemed"] === 1;
-      new_events.push(new_event);
-    }
+    let new_event = { ...event };
+    delete new_event["redeemed"];
+    new_event["redeemed"] = event["redeemed"] === 1;
 
     res.json({
       status: status.OK,
-      events: new_events,
+      event: new_event,
     });
   },
 
