@@ -219,8 +219,12 @@ module.exports = {
         );
       }
 
+      let new_nft_holder = { ...nft_holder };
+      delete new_nft_holder["holder_status"];
+      new_nft_holder["holder_status"] = nft_holder.holder_status === 1;
+
       res.json({
-        nft_holder: nft_holder,
+        nft_holder: new_nft_holder,
         status: status.OK,
       });
     } else {
