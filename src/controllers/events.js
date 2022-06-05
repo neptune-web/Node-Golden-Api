@@ -85,12 +85,7 @@ module.exports = {
       return;
     }
 
-    if (!has(req.body, ["user_id"])) {
-      res.status(status.BAD_REQUEST).json();
-      return;
-    }
-
-    const { user_id, event_id } = req.body;
+    const { event_id } = req.body;
 
     let events = await eventModel.redeemEvent(event_id);
     let event = events[0];
