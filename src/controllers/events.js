@@ -198,7 +198,6 @@ module.exports = {
     let new_events = [];
 
     const events = await eventModel.getEventsByNFTHolder(user_id);
-    console.log(events);
 
     for (let i = 0; i < events.length; i++) {
       let event = events[i];
@@ -221,9 +220,9 @@ module.exports = {
       }
 
       if (event.user_id === user_id) {
-        new_event["invited"] = false;
+        new_event["joined"] = false;
       } else {
-        new_event["invited"] = true;
+        new_event["joined"] = true;
       }
       new_events.push(new_event);
     }
