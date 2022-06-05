@@ -6,12 +6,10 @@ const events = {
       "INSERT INTO events(user_id, event_code, host_code, name, link, qrcode, date) VALUES(?, ?, ?, ?, ?, ?, ?)",
       [user_id, event_code, host_code, name, link, qrcode, date]
     );
-    return (
-      await db.query(
-        "SELECT user_id, event_code, host_code, name, link, qrcode, date FROM events WHERE user_id = ? ORDER BY id desc LIMIT 1",
-        [user_id]
-      )
-    )[0];
+    return await db.query(
+      "SELECT user_id, name, link, qrcode, date FROM events",
+      [user_id]
+    );
   },
 
   async getEvents(user_id) {
