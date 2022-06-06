@@ -16,7 +16,7 @@ const events = {
 
   async getEvents(user_id) {
     return await db.query(
-      "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE user_id = ? ORDER BY id desc",
+      "SELECT * FROM events WHERE user_id = ? ORDER BY id desc",
       [user_id]
     );
   },
@@ -29,33 +29,23 @@ const events = {
   },
 
   async getEventById(event_id) {
-    return (
-      await db.query(
-        "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE id = ?",
-        [event_id]
-      )
-    )[0];
+    return (await db.query("SELECT * FROM events WHERE id = ?", [event_id]))[0];
   },
 
   async getEventByEventCode(event_code) {
-    return await db.query(
-      "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE event_code = ?",
-      [event_code]
-    );
+    return await db.query("SELECT * FROM events WHERE event_code = ?", [
+      event_code,
+    ]);
   },
 
   async getEventsByUserId(user_id) {
-    return await db.query(
-      "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE user_id = ?",
-      [user_id]
-    );
+    return await db.query("SELECT * FROM events WHERE user_id = ?", [user_id]);
   },
 
   async getEventByHostCode(host_code) {
-    return await db.query(
-      "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE host_code = ?",
-      [host_code]
-    );
+    return await db.query("SELECT * FROM events WHERE host_code = ?", [
+      host_code,
+    ]);
   },
 
   async getRedeemEvents(event_id, wallet_address) {
