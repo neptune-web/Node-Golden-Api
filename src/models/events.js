@@ -65,6 +65,23 @@ const events = {
     }
   },
 
+  async isRedeemedEvent(wallet_address, event_id) {
+    let wallet = (
+      await db.query("SELECT * FROM addresses WHERE wallet_address = ?", [
+        wallet_address,
+      ])
+    )[0];
+
+    if (wallet) {
+      let redeem_events = await db.query(
+        "SELECT * FROM redeem_event WHERE event_id = ? AND wallet_address = ?",
+        [event_id, wallet.id]
+      );
+      if (redeem_events.length > 0) return true;
+      else return false;
+    } else return false;
+  },
+
   async redeemEvent(wallet_address, event_id) {
     let wallet = (
       await db.query("SELECT * FROM addresses WHERE wallet_address = ?", [

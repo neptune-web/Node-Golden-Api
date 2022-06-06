@@ -98,9 +98,23 @@ module.exports = {
 
     const { wallet_address, event_id } = req.body;
 
+    let redeem_status = await eventModel.isRedeemedEvent(
+      wallet_address,
+      event_id
+    );
+    if (redeem_status) {
+      res.json({
+        redeemed: false,
+        message: "Event is already redeemed",
+        status: status.OK,
+      });
+      return;
+    }
+
     let events = await eventModel.redeemEvent(wallet_address, event_id);
     if (!events) {
       res.json({
+        redeemed: false,
         message: "Failed to redeem event",
         status: status.OK,
       });
@@ -115,11 +129,13 @@ module.exports = {
 
     if (events.length > 0)
       res.json({
+        redeemed: true,
         event: new_event,
         status: status.OK,
       });
     else
       res.json({
+        redeemed: false,
         message: "Failed to redeem event",
         status: status.OK,
       });
