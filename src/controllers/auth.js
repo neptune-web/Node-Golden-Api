@@ -133,6 +133,8 @@ module.exports = {
 
     const user = await userModel.getUserByPhone(phone);
 
+    await verficationModel.removeVerification(phone);
+
     if (user?.user_id) {
       const token = jwt.sign(
         {
@@ -147,8 +149,6 @@ module.exports = {
           expiresIn: JWT_TOKEN_EXPIRATION,
         }
       );
-
-      await verficationModel.removeVerification(phone);
 
       let new_user = { ...user };
       delete new_user["nft_holder"];
