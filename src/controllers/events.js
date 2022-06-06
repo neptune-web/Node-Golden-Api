@@ -81,18 +81,37 @@ module.exports = {
 
   async redeemEvent(req, res) {
     if (!has(req.body, ["event_id"])) {
-      res.status(status.BAD_REQUEST).json();
+      res.json({
+        message: "event_id is undefined",
+        status: status.OK,
+      });
       return;
     }
 
-    const { event_id } = req.body;
+    if (!has(req.body, ["wallet_address"])) {
+      res.json({
+        message: "wallet_address is undefined",
+        status: status.OK,
+      });
+      return;
+    }
 
-    let events = await eventModel.redeemEvent(event_id);
+    const { wallet_address, event_id } = req.body;
+
+    let events = await eventModel.redeemEvent(wallet_address, event_id);
+    if (!events) {
+      res.json({
+        message: "Failed to redeem event",
+        status: status.OK,
+      });
+      return;
+    }
+
     let event = events[0];
 
     let new_event = { ...event };
     delete new_event["redeemed"];
-    new_event["redeemed"] = event["redeemed"] === 1;
+    new_event["redeemed"] = true;
 
     if (events.length > 0)
       res.json({
@@ -192,7 +211,10 @@ module.exports = {
 
     let new_events = [];
 
-    const events = await eventModel.getEventsByNFTHolder(user_id);
+    const holder_events = await eventModel.getEventsByNFTHolder(user_id);
+    const host_events = await eventModel.getEvents(user_id);
+
+    let events = [...holder_events, ...host_events];
 
     for (let i = 0; i < events.length; i++) {
       let event = events[i];
@@ -205,14 +227,16 @@ module.exports = {
 
       if (holders.length === 0) {
         new_event = { ...event, verified: false };
-        delete event["redeemed"];
-        new_event["redeemed"] = event["redeemed"] === 1;
       } else {
         let holder = holders[0];
         new_event = { ...event, verified: holder.holder_status === 1 };
-        delete event["redeemed"];
-        new_event["redeemed"] = event["redeemed"] === 1;
       }
+
+      let redeems = await eventModel.getRedeemEvents(event.id, wallet_address);
+
+      delete event["redeemed"];
+      if (redeems.length > 0) new_event["redeemed"] = true;
+      else new_event["redeemed"] = false;
 
       if (event.user_id === user_id) {
         new_event["joined"] = false;
@@ -227,66 +251,6 @@ module.exports = {
       status: status.OK,
     });
   },
-
-  async getEventsByNFTHolder(req, res) {
-    if (!has(req.body, ["user_id"])) {
-      res.json({
-        message: "user_id is undefined",
-        status: status.BAD_REQUEST,
-      });
-    }
-
-    if (!has(req.body, ["wallet_address"])) {
-      res.json({
-        message: "wallet_address is undefined",
-        status: status.BAD_REQUEST,
-      });
-    }
-
-    const { user_id, wallet_address } = req.body;
-
-    let new_events = [];
-
-    const events = await eventModel.getEventsByNFTHolder(user_id);
-
-    for (let i = 0; i < events.length; i++) {
-      let event = events[i];
-      let new_event;
-      let opensea_link = event.link;
-      const holders = await nftHolderModel.getNFTHolder(
-        wallet_address,
-        opensea_link
-      );
-
-      if (holders.length === 0) {
-        new_event = { ...event, verified: false };
-        delete event["redeemed"];
-        new_event["redeemed"] = event["redeemed"] === 1;
-      } else {
-        let holder = holders[0];
-        new_event = { ...event, verified: holder.holder_status === 1 };
-        delete event["redeemed"];
-        new_event["redeemed"] = event["redeemed"] === 1;
-      }
-
-      new_events.push(new_event);
-    }
-
-    res.json({
-      events: new_events,
-      status: status.OK,
-    });
-  },
-
-  // async getEvents(req, res) {
-  //   const { user_id } = req.body;
-  //   let userId = user_id;
-  //   const events = await eventModel.getEvents(userId);
-  //   res.json({
-  //     status: status.OK,
-  //     events: events,
-  //   });
-  // },
 
   async getEventById(req, res) {
     const { event_id } = req.body;

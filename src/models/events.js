@@ -16,7 +16,7 @@ const events = {
 
   async getEvents(user_id) {
     return await db.query(
-      "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE user_id = ?",
+      "SELECT id, user_id, name, link, qrcode, date, redeemed FROM events WHERE user_id = ? ORDER BY id desc",
       [user_id]
     );
   },
@@ -58,9 +58,43 @@ const events = {
     );
   },
 
-  async redeemEvent(event_id) {
-    await db.query("UPDATE events SET redeemed = 1 WHERE id = ?", [event_id]);
-    return await db.query("SELECT * FROM events WHERE id = ?", [event_id]);
+  async getRedeemEvents(event_id, wallet_address) {
+    let wallet = (
+      await db.query("SELECT * FROM addresses WHERE wallet_address = ?", [
+        wallet_address,
+      ])
+    )[0];
+
+    if (wallet) {
+      return await db.query(
+        "SELECT * FROM redeem_event WHERE event_id = ? AND wallet_address = ?",
+        [event_id, wallet.id]
+      );
+    } else {
+      return [];
+    }
+  },
+
+  async redeemEvent(wallet_address, event_id) {
+    let wallet = (
+      await db.query("SELECT * FROM addresses WHERE wallet_address = ?", [
+        wallet_address,
+      ])
+    )[0];
+
+    if (wallet) {
+      let redeem_events = await db.query(
+        "SELECT * FROM redeem_event WHERE event_id = ? AND wallet_address = ?",
+        [event_id, wallet.id]
+      );
+      if (redeem_events.length === 0)
+        await db.query(
+          "INSERT INTO redeem_event(wallet_address, event_id) VALUES(?, ?)",
+          [wallet.id, event_id]
+        );
+      return await db.query("SELECT * FROM events WHERE id = ?", [event_id]);
+    }
+    return null;
   },
 
   async joinEvent(user_id, event_id) {
@@ -78,7 +112,7 @@ const events = {
 
   async getEventsByNFTHolder(user_id) {
     return await db.query(
-      "SELECT `events`.* FROM joined_event INNER JOIN `events` ON joined_event.event_id = `events`.id WHERE joined_event.user_id = ? OR `events`.id = ? ORDER By `events`.id DESC",
+      "SELECT `events`.* FROM joined_event INNER JOIN `events` ON joined_event.event_id = `events`.id WHERE joined_event.user_id = ? ORDER By `events`.id DESC",
       [user_id, user_id]
     );
   },
