@@ -9,5 +9,11 @@ router.post(
   checkToken,
   address.addWalletAddress
 );
+router.post(
+  "/api/address/deleteWalletAddress",
+  checkToken,
+  address.deleteWalletAddress
+);
+
 router.post("/api/address/selectAddress", checkToken, address.selectAddress);
 module.exports = router;

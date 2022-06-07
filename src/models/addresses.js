@@ -49,6 +49,13 @@ const addresses = {
       )
     )[0];
   },
+
+  async deleteAddress(user_id, wallet_address) {
+    await db.query(
+      "DELETE FROM addresses WHERE user_id = ? AND wallet_address = ?",
+      [user_id, wallet_address]
+    );
+  },
 };
 
 module.exports = addresses;
