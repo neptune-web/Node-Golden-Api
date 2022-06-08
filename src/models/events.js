@@ -32,7 +32,13 @@ const events = {
     return (await db.query("SELECT * FROM events WHERE id = ?", [event_id]))[0];
   },
 
-  async getEventByEventCode(event_code) {
+  async getEventByEventCode(event_code, host_code) {
+    if (host_code !== undefined) {
+      return await db.query(
+        "SELECT * FROM events WHERE event_code = ? AND host_code = ?",
+        [event_code, host_code]
+      );
+    }
     return await db.query("SELECT * FROM events WHERE event_code = ?", [
       event_code,
     ]);

@@ -157,28 +157,17 @@ module.exports = {
     }
 
     const { user_id, event_code, host_code, wallet_address } = req.body;
+    console.log("host_code=", host_code);
 
-    let events = await eventModel.getEventByEventCode(event_code);
+    let events = await eventModel.getEventByEventCode(event_code, host_code);
 
     if (events.length === 0) {
-      if (host_code === undefined) {
-        res.json({
-          event_code: "Event code is wrong or event is not exist.",
-          joined: false,
-          status: status.OK,
-        });
-        return;
-      } else {
-        events = await eventModel.getEventByHostCode(host_code);
-        if (events.length === 0) {
-          res.json({
-            event_code: "Host code is wrong or event is not exist.",
-            joined: false,
-            status: status.OK,
-          });
-          return;
-        }
-      }
+      res.json({
+        event_code: "The code is wrong or Event is not exist.",
+        joined: false,
+        status: status.OK,
+      });
+      return;
     }
 
     let event = events[0];
