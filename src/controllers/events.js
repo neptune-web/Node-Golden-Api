@@ -163,7 +163,8 @@ module.exports = {
     if (events.length === 0) {
       if (host_code === undefined) {
         res.json({
-          event_code: "Event code is invalid",
+          event_code: "Event code is wrong or event is not exist.",
+          joined: false,
           status: status.OK,
         });
         return;
@@ -171,7 +172,8 @@ module.exports = {
         events = await eventModel.getEventByHostCode(host_code);
         if (events.length === 0) {
           res.json({
-            event_code: "Host code is invalid",
+            event_code: "Host code is wrong or event is not exist.",
+            joined: false,
             status: status.OK,
           });
           return;
@@ -184,8 +186,8 @@ module.exports = {
     let joinedEvent = await eventModel.getJoinedEvent(user_id, event.id);
     if (joinedEvent.length > 0) {
       res.json({
-        event_code: "Code is OK",
-        join_exist: true,
+        event_code: "Already joined the event",
+        joined: false,
         status: status.OK,
       });
       return;
@@ -211,8 +213,8 @@ module.exports = {
     }
 
     res.json({
-      event_code: "Code is OK",
-      join_exist: false,
+      event_code: "Event joined successfully",
+      join_exist: true,
       status: status.OK,
     });
   },
