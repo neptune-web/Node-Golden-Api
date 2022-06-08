@@ -180,6 +180,16 @@ module.exports = {
     }
 
     let event = events[0];
+
+    let joinedEvent = await eventModel.getJoinedEvent(user_id, event.id);
+    if (joinedEvent.length > 0) {
+      res.json({
+        event_code: "Code is OK",
+        join_exist: true,
+        status: status.OK,
+      });
+      return;
+    }
     await eventModel.joinEvent(user_id, event.id);
 
     for (let i = 0; i < events.length; i++) {
@@ -202,6 +212,7 @@ module.exports = {
 
     res.json({
       event_code: "Code is OK",
+      join_exist: false,
       status: status.OK,
     });
   },

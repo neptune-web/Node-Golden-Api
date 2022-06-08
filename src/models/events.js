@@ -117,6 +117,13 @@ const events = {
     }
   },
 
+  async getJoinedEvent(user_id, event_id) {
+    return await db.query(
+      "SELECT * FROM joined_event WHERE user_id = ? AND event_id = ?",
+      [user_id, event_id]
+    );
+  },
+
   async getEventsByNFTHolder(user_id) {
     return await db.query(
       "SELECT `events`.* FROM joined_event INNER JOIN `events` ON joined_event.event_id = `events`.id WHERE joined_event.user_id = ? ORDER By `events`.id DESC",
