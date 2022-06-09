@@ -47,6 +47,16 @@ module.exports = {
 
     const { phone } = req.body;
 
+    let users = await userModel.getUser(phone);
+
+    if (users === undefined || users?.length === 0) {
+      res.json({
+        user_exist: false,
+        status: status.OK,
+      });
+      return;
+    }
+
     let code = "";
     for (let i = 0; i < 4; i++) {
       code += getRandomInt(10);
@@ -63,6 +73,7 @@ module.exports = {
     await verficationModel.createVerification(phone, code);
 
     res.json({
+      user_exist: true,
       message: "PIN code is sent.",
       status: status.OK,
     });
