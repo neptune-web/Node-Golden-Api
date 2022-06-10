@@ -10,6 +10,10 @@ router.post(
   address.addWalletAddress
 );
 router.post(
+  "/api/address/addWalletAddressByPhone",
+  address.addWalletAddressByPhone
+);
+router.post(
   "/api/address/deleteWalletAddress",
   checkToken,
   address.deleteWalletAddress

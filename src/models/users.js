@@ -1,5 +1,4 @@
 const db = require("./database.js");
-const { uuid } = require("uuidv4");
 
 const users = {
   async create(user_id, phone, wallet_address, nft_holder) {
