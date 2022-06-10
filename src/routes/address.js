@@ -18,6 +18,11 @@ router.post(
   checkToken,
   address.deleteWalletAddress
 );
+router.post(
+  "/api/address/getAllWalletAddress",
+  checkToken,
+  address.getAllWalletAddress
+);
 
 router.post("/api/address/selectAddress", checkToken, address.selectAddress);
 module.exports = router;

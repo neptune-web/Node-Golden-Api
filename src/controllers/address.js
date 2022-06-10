@@ -89,6 +89,26 @@ module.exports = {
     });
   },
 
+  async getAllWalletAddress(req, res) {
+    if (!has(req.body, ["user_id"])) {
+      res.json({
+        message: "user_id parameter is undefined",
+        status: status.OK,
+      });
+      return;
+    }
+
+    const { user_id } = req.body;
+
+    let addresses = await addressModel.getAddresses(user_id);
+    res.json({
+      address: addresses,
+      status: status.OK,
+    });
+
+    return;
+  },
+
   async addWalletAddressByPhone(req, res) {
     if (!has(req.body, ["phone"])) {
       res.json({
@@ -121,7 +141,7 @@ module.exports = {
       return;
     }
 
-    let existAddress = await addressModel.getAddress(user_id, wallet_address);
+    let existAddress = await addressModel.getAddresses(user_id, wallet_address);
     if (existAddress?.id) {
       await addressModel.selectAddress(user_id, wallet_address);
 
