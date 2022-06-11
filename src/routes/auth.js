@@ -5,7 +5,10 @@ const { validate } = require("express-validation");
 const auth = require("../controllers/auth.js");
 
 const authValidator = require("../validators/auth-validator");
-const { checkToken } = require("../middlewares/authMiddleware");
+const {
+  checkToken,
+  validateAuthToken,
+} = require("../middlewares/authMiddleware");
 
 router.post("/api/auth/login", auth.logIn);
 router.post(
@@ -23,6 +26,7 @@ router.post(
   checkToken,
   auth.verifyWalletAddress
 );
+router.post("/api/auth/validateAuthToken", validateAuthToken);
 
 router.post("/api/auth/getUserByPhone", auth.getUserByPhone);
 
