@@ -136,6 +136,7 @@ module.exports = {
     } else {
       res.json({
         message: "user is not exist",
+        exist: false,
         status: status.OK,
       });
       return;
@@ -147,6 +148,7 @@ module.exports = {
 
       res.json({
         address: existAddress,
+        exist: true,
         status: status.OK,
       });
 
@@ -159,6 +161,7 @@ module.exports = {
 
     res.json({
       address,
+      exist: false,
       status: status.OK,
     });
   },
