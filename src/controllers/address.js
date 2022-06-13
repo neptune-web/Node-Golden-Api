@@ -141,7 +141,7 @@ module.exports = {
       return;
     }
 
-    let existAddress = await addressModel.getAddresses(user_id, wallet_address);
+    let existAddress = await addressModel.getAddress(user_id, wallet_address);
     if (existAddress?.id) {
       await addressModel.selectAddress(user_id, wallet_address);
 
