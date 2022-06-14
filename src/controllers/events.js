@@ -59,16 +59,16 @@ module.exports = {
       events = await eventModel.getEventByHostCode(host_code);
     } while (events.length > 0);
 
-    const existEvents = await eventModel.existEvent(userId, name, link);
+    // const existEvents = await eventModel.existEvent(userId, name, link);
 
-    if (existEvents && existEvents.length > 0) {
-      res.json({
-        status: status.OK,
-        exist_event: true,
-        message: "Event is already created",
-      });
-      return;
-    }
+    // if (existEvents && existEvents.length > 0) {
+    //   res.json({
+    //     status: status.OK,
+    //     exist_event: true,
+    //     message: "Event is already created",
+    //   });
+    //   return;
+    // }
 
     const event = await eventModel.createEvent(
       userId,
@@ -86,7 +86,7 @@ module.exports = {
 
     res.json({
       status: status.OK,
-      exist_event: false,
+      // exist_event: false,
       event: new_event,
     });
   },
