@@ -14,10 +14,10 @@ const events = {
     )[0];
   },
 
-  async existEvent(user_id, event_code, host_code) {
+  async existEvent(user_id, name, link) {
     return await db.query(
-      "SELECT * FROM events WHERE user_id = ? AND event_code = ? AND host_code = ? ORDER BY id desc",
-      [user_id, event_code, host_code]
+      "SELECT * FROM events WHERE user_id = ? AND name = ? AND link = ? ORDER BY id desc",
+      [user_id, name, link]
     );
   },
 
