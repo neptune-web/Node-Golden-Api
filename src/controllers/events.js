@@ -86,6 +86,7 @@ module.exports = {
 
     res.json({
       status: status.OK,
+      exist_event: false,
       event: new_event,
     });
   },
