@@ -14,6 +14,13 @@ const events = {
     )[0];
   },
 
+  async existEvent(user_id, event_code, host_code) {
+    return await db.query(
+      "SELECT * FROM events WHERE user_id = ? AND event_code = event_code AND host_code = host_code ORDER BY id desc",
+      [user_id, event_code, host_code]
+    );
+  },
+
   async getEvents(user_id) {
     return await db.query(
       "SELECT * FROM events WHERE user_id = ? ORDER BY id desc",
