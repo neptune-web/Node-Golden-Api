@@ -59,20 +59,20 @@ module.exports = {
       events = await eventModel.getEventByHostCode(host_code);
     } while (events.length > 0);
 
-    const existEvents = await eventModel.existEvent(
-      userId,
-      event_code,
-      host_code
-    );
+    // const existEvents = await eventModel.existEvent(
+    //   userId,
+    //   event_code,
+    //   host_code
+    // );
 
-    if (existEvents.length > 0) {
-      res.json({
-        status: status.OK,
-        exist_event: true,
-        message: "Event is already created",
-      });
-      return;
-    }
+    // if (existEvents.length > 0) {
+    //   res.json({
+    //     status: status.OK,
+    //     exist_event: true,
+    //     message: "Event is already created",
+    //   });
+    //   return;
+    // }
 
     const event = await eventModel.createEvent(
       userId,
