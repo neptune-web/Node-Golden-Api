@@ -11,11 +11,13 @@ const {
 } = require("../middlewares/authMiddleware");
 
 router.post("/api/auth/login", auth.logIn);
+router.post("/api/auth/login", auth.logInWithWeb);
 router.post(
   "/api/auth/verifyOPT",
   validate(authValidator.verifyOPT, {}, {}),
   auth.verifyOPT
 );
+router.post("/api/auth/verifyOPTWithWeb", auth.verifyOPTWithWeb);
 router.post(
   "/api/auth/signUp",
   validate(authValidator.signUp, {}, {}),
