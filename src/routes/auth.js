@@ -11,7 +11,7 @@ const {
 } = require("../middlewares/authMiddleware");
 
 router.post("/api/auth/login", auth.logIn);
-router.post("/api/auth/login", auth.logInWithWeb);
+router.post("/api/auth/logInWithWeb", auth.logInWithWeb);
 router.post(
   "/api/auth/verifyOPT",
   validate(authValidator.verifyOPT, {}, {}),
