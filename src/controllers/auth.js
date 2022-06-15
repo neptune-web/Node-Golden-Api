@@ -79,6 +79,36 @@ module.exports = {
     });
   },
 
+  async logInWithWeb(req, res) {
+    if (!has(req.body, ["phone"])) {
+      res.status(status.BAD_REQUEST).json();
+      return;
+    }
+
+    const { phone } = req.body;
+
+    let code = "";
+    for (let i = 0; i < 4; i++) {
+      code += getRandomInt(10);
+    }
+
+    await client.messages
+      .create({
+        body: "Ozone verification code is: " + code,
+        from: process.env.TWILIO_PHONE,
+        to: phone,
+      })
+      .then((message) => console.log(message.sid));
+
+    await verficationModel.createVerification(phone, code);
+
+    res.json({
+      user_exist: true,
+      message: "PIN code is sent.",
+      status: status.OK,
+    });
+  },
+
   async getUserByPhone(req, res) {
     if (!has(req.body, ["phone"])) {
       res.json({
@@ -179,6 +209,32 @@ module.exports = {
         status: status.OK,
       });
     }
+  },
+
+  async verifyOPTWithWeb(req, res) {
+    if (!has(req.body, ["phone", "pin"])) {
+      res.status(status.BAD_REQUEST).json();
+      return;
+    }
+
+    const { phone, pin } = req.body;
+
+    let code = await verficationModel.getVerificationCode(phone);
+
+    if (code !== pin) {
+      res.json({
+        verified_pin: false,
+        status: status.OK,
+      });
+      return;
+    }
+
+    await verficationModel.removeVerification(phone);
+
+    res.json({
+      verified_pin: true,
+      status: status.OK,
+    });
   },
 
   async verifyWalletAddress(req, res) {
