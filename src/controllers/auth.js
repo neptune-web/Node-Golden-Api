@@ -22,19 +22,23 @@ function getRandomInt(max) {
 }
 
 const verifyNFTHolder = async (wallet_address, opensea_link) => {
+  let links = opensea_link.split("/");
+  if (links.length < 3) return false;
+  let link = links[links.length - 1];
+  console.log(link);
   const options = {
     method: "GET",
     url: "https://api.opensea.io/api/v1/assets",
     params: {
       owner: wallet_address,
-      collection_slug: opensea_link.slice(30),
+      collection_slug: link,
     },
     headers: {
-      Accept: "application/json",
       "X-API-KEY": "2f6f419a083c46de9d83ce3dbe7db601",
     },
   };
   const response = await axios.request(options);
+  console.log(response.data.assets);
   return response.data.assets.length > 0;
 };
 
@@ -273,6 +277,9 @@ module.exports = {
       let holder_status = (await verifyNFTHolder(wallet_address, opensea_link))
         ? 1
         : 0;
+
+      console.log("-------dddd-----", holder_status);
+
       let holders = await nftHolderModel.getNFTHolder(
         wallet_address,
         opensea_link
