@@ -2,9 +2,10 @@ const db = require("./database.js");
 
 const events = {
   async createEvent(user_id, event_code, host_code, name, link, qrcode, date) {
+    let dateTime = new Date();
     await db.query(
-      "INSERT INTO events(user_id, event_code, host_code, name, link, qrcode, date) VALUES(?, ?, ?, ?, ?, ?, ?)",
-      [user_id, event_code, host_code, name, link, qrcode, date]
+      "INSERT INTO events(user_id, event_code, host_code, name, link, qrcode, date, dateTime) VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+      [user_id, event_code, host_code, name, link, qrcode, date, dateTime]
     );
     return (
       await db.query(

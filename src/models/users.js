@@ -5,13 +5,15 @@ const users = {
     const user = await this.getUser(phone);
     if (user?.id) return user;
 
+    let date = new Date();
+
     await db.query(
-      "INSERT INTO users(user_id, phone, wallet_address, nft_holder) VALUES(?, ?, ?, ?)",
-      [user_id, phone, wallet_address, nft_holder]
+      "INSERT INTO users(user_id, phone, wallet_address, nft_holder, date) VALUES(?, ?, ?, ?, ?)",
+      [user_id, phone, wallet_address, nft_holder, date]
     );
     return (
       await db.query(
-        "SELECT user_id, phone, wallet_address FROM users WHERE user_id = ?",
+        "SELECT user_id, phone, wallet_address, date FROM users WHERE user_id = ?",
         [user_id]
       )
     )[0];
