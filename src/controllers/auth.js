@@ -38,6 +38,12 @@ const verifyNFTHolder = async (wallet_address, opensea_link) => {
   return response.data.assets.length > 0;
 };
 
+function validatePhoneNumber(input_str) {
+  var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+  return re.test(input_str);
+}
+
 module.exports = {
   async logIn(req, res) {
     if (!has(req.body, ["phone"])) {
@@ -303,14 +309,30 @@ module.exports = {
   },
 
   async signUp(req, res) {
-    if (!has(req.body, ["phone"]) && !has(req.body, ["wallet_address"])) {
-      res.status(status.BAD_REQUEST).json();
+    if (!has(req.body, ["phone"])) {
+      res.json({
+        message: "phone parameter is not defined",
+        status: status.BAD_REQUEST,
+      });
       return;
     }
-
+    if (!has(req.body, ["wallet_address"])) {
+      res.json({
+        message: "wallet_address parameter is not defined",
+        status: status.BAD_REQUEST,
+      });
+      return;
+    }
     const userId = uuid();
     const { phone, wallet_address } = req.body;
 
+    if (!validatePhoneNumber(phone)) {
+      res.json({
+        message: "phone is invalid",
+        status: status.BAD_REQUEST,
+      });
+      return;
+    }
     // let nft_holder = (await verifyNFTHolder(wallet_address)) ? 1 : 0;
     let existingUser = await userModel.getUser(phone);
     let user;
