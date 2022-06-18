@@ -42,7 +42,13 @@ module.exports = {
 
     const { user_id, wallet_address } = req.body;
 
+    let existAddress = await addressModel.getAddress(user_id, wallet_address);
+    if (!existAddress?.id) {
+      await addressModel.createAddress(user_id, wallet_address);
+    }
+
     let user = await addressModel.selectAddress(user_id, wallet_address);
+
     let new_user = { ...user };
     delete new_user["nft_holder"];
     new_user["nft_holder"] = user.nft_holder === 1;
