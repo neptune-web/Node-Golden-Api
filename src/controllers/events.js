@@ -134,7 +134,7 @@ module.exports = {
     if (joined_events.length === 0) {
       res.json({
         redeemed: false,
-        message: "Failed to redeem event",
+        message: "Failed to redeem event.",
         status: status.OK,
       });
       return;
