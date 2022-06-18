@@ -96,6 +96,13 @@ const events = {
     } else return false;
   },
 
+  async getJoinedEventByAddress(wallet_address, event_id) {
+    return await db.query(
+      "SELECT joined_event.* FROM joined_event INNER JOIN addresses ON joined_event.user_id = addresses.user_id WHERE addresses.wallet_address = ? AND joined_event.event_id = ?",
+      [wallet_address, event_id]
+    );
+  },
+
   async redeemEvent(wallet_address, event_id) {
     let wallet = (
       await db.query("SELECT * FROM addresses WHERE wallet_address = ?", [

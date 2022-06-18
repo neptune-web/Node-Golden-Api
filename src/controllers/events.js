@@ -127,6 +127,16 @@ module.exports = {
       return;
     }
 
+    let joined_events = await getJoinedEventByAddress(wallet_address, event_id);
+    if (joined_events.length === 0) {
+      res.json({
+        redeemed: false,
+        message: "Failed to redeem event",
+        status: status.OK,
+      });
+      return;
+    }
+
     let events = await eventModel.redeemEvent(wallet_address, event_id);
     if (!events) {
       res.json({
