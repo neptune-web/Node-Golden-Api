@@ -25,7 +25,7 @@ const verifyNFTHolder = async (wallet_address, opensea_link) => {
   let links = opensea_link.split("/");
   if (links.length < 3) return false;
   let link = links[links.length - 1];
-  console.log(link);
+
   const options = {
     method: "GET",
     url: "https://api.opensea.io/api/v1/assets",

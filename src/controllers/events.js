@@ -16,12 +16,16 @@ function getRandomInt(max) {
 }
 
 const verifyNFTHolder = async (wallet_address, opensea_link) => {
+  let links = opensea_link.split("/");
+  if (links.length < 3) return false;
+  let link = links[links.length - 1];
+
   const options = {
     method: "GET",
     url: "https://api.opensea.io/api/v1/assets",
     params: {
       owner: wallet_address,
-      collection_slug: opensea_link.slice(30),
+      collection_slug: link,
     },
     headers: {
       Accept: "application/json",
@@ -254,7 +258,7 @@ module.exports = {
         wallet_address,
         opensea_link
       );
-
+      console.log(opensea_link, holders);
       if (holders.length === 0) {
         new_event = { ...event, verified: false };
       } else {

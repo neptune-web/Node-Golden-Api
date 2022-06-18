@@ -6,12 +6,17 @@ module.exports = {
   async verifyOwnership(req, res) {
     try {
       let { opensea_link, metamask_address } = req.body;
+
+      let links = opensea_link.split("/");
+      if (links.length < 3) return false;
+      let link = links[links.length - 1];
+
       const options = {
         method: "GET",
         url: "https://api.opensea.io/api/v1/assets",
         params: {
           owner: metamask_address,
-          collection_slug: opensea_link.slice(30),
+          collection_slug: link,
         },
         headers: {
           Accept: "application/json",
