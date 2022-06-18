@@ -219,7 +219,7 @@ module.exports = {
 
     res.json({
       event_code: "Event joined successfully",
-      join_exist: true,
+      joined: true,
       status: status.OK,
     });
   },
