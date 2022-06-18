@@ -127,7 +127,10 @@ module.exports = {
       return;
     }
 
-    let joined_events = await getJoinedEventByAddress(wallet_address, event_id);
+    let joined_events = await eventModel.getJoinedEventByAddress(
+      wallet_address,
+      event_id
+    );
     if (joined_events.length === 0) {
       res.json({
         redeemed: false,
