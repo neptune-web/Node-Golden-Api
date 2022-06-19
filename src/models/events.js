@@ -151,6 +151,13 @@ const events = {
       [user_id, user_id]
     );
   },
+
+  async getAllAddressForRedeemedEvent(event_id) {
+    return await db.query(
+      "SELECT joined_event.*, addresses.wallet_address, `events`.link FROM joined_event INNER JOIN users ON users.user_id = joined_event.user_id INNER JOIN addresses ON users.wallet_address = addresses.id INNER JOIN `events` ON `events`.id = ? WHERE joined_event.event_id = ?",
+      [event_id, event_id]
+    );
+  },
 };
 
 module.exports = events;

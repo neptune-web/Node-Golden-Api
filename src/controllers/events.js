@@ -290,4 +290,34 @@ module.exports = {
       event: new_event ?? null,
     });
   },
+
+  async getAllAddressForRedeemedEvent(req, res) {
+    if (!has(req.body, ["event_id"])) {
+      res.json({
+        message: "event_id is undefined",
+        status: status.BAD_REQUEST,
+      });
+      return;
+    }
+    const { event_id } = req.body;
+
+    const addresses = await eventModel.getAllAddressForRedeemedEvent(event_id);
+
+    let wallet_addresses = [];
+    for (let i = 0; i < addresses.length; i++) {
+      let address = addresses[i];
+      const { wallet_address, link } = address;
+      let nft_holder = await nftHolderModel.getNFTHolder(wallet_address, link);
+      let verified = false;
+      if (nft_holder.length > 0) {
+        verified = true;
+      }
+      wallet_addresses.push({ wallet_address, verified });
+    }
+
+    res.json({
+      status: status.OK,
+      addresses: wallet_addresses,
+    });
+  },
 };
