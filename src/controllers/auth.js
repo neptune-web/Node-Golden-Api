@@ -8,8 +8,6 @@ const nftHolderModel = require("../models/nft_holder.js");
 
 const { uuid } = require("uuidv4");
 
-const axios = require("axios");
-
 var jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY, JWT_TOKEN_EXPIRATION } = process.env;
 
@@ -20,27 +18,6 @@ const client = require("twilio")(accountSid, authToken);
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
-
-const verifyNFTHolder = async (wallet_address, opensea_link) => {
-  let links = opensea_link.split("/");
-  if (links.length < 3) return false;
-  let link = links[links.length - 1];
-
-  const options = {
-    method: "GET",
-    url: "https://api.opensea.io/api/v1/assets",
-    params: {
-      owner: wallet_address,
-      collection_slug: link,
-    },
-    headers: {
-      "X-API-KEY": "2f6f419a083c46de9d83ce3dbe7db601",
-    },
-  };
-  const response = await axios.request(options);
-  console.log(response.data.assets);
-  return response.data.assets.length > 0;
-};
 
 function validatePhoneNumber(input_str) {
   var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
@@ -274,7 +251,10 @@ module.exports = {
     const user = await userModel.getUser(phone);
 
     if (user?.user_id) {
-      let holder_status = (await verifyNFTHolder(wallet_address, opensea_link))
+      let holder_status = (await nftHolderModel.verifyNFTHolder(
+        wallet_address,
+        opensea_link
+      ))
         ? 1
         : 0;
 
@@ -339,7 +319,7 @@ module.exports = {
       });
       return;
     }
-    // let nft_holder = (await verifyNFTHolder(wallet_address)) ? 1 : 0;
+
     let existingUser = await userModel.getUser(phone);
     let user;
 

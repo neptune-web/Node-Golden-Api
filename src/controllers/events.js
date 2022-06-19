@@ -4,37 +4,12 @@ const has = require("has-keys");
 const eventModel = require("../models/events.js");
 const nftHolderModel = require("../models/nft_holder.js");
 
-const axios = require("axios");
-
-//var jwt = require("jsonwebtoken");
-//const { JWT_SECRET_KEY } = process.env;
 var QRCode = require("qrcode");
 const events = require("../models/events.js");
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
-
-const verifyNFTHolder = async (wallet_address, opensea_link) => {
-  let links = opensea_link.split("/");
-  if (links.length < 3) return false;
-  let link = links[links.length - 1];
-
-  const options = {
-    method: "GET",
-    url: "https://api.opensea.io/api/v1/assets",
-    params: {
-      owner: wallet_address,
-      collection_slug: link,
-    },
-    headers: {
-      Accept: "application/json",
-      "X-API-KEY": "2f6f419a083c46de9d83ce3dbe7db601",
-    },
-  };
-  const response = await axios.request(options);
-  return response.data.assets.length > 0;
-};
 
 module.exports = {
   async createEvent(req, res) {
@@ -186,7 +161,6 @@ module.exports = {
     }
 
     const { user_id, event_code, host_code, wallet_address } = req.body;
-    console.log("host_code=", host_code);
 
     let events = await eventModel.getEventByEventCode(event_code, host_code);
 
@@ -221,7 +195,10 @@ module.exports = {
       );
 
       if (holders.length === 0) {
-        let holder_status = await verifyNFTHolder(wallet_address, opensea_link);
+        let holder_status = await nftHolderModel.verifyNFTHolder(
+          wallet_address,
+          opensea_link
+        );
         if (holder_status) {
           await nftHolderModel.createNFTHolder(wallet_address, opensea_link, 1);
         } else {
