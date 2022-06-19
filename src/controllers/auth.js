@@ -278,8 +278,6 @@ module.exports = {
         ? 1
         : 0;
 
-      console.log("-------dddd-----", holder_status);
-
       let holders = await nftHolderModel.getNFTHolder(
         wallet_address,
         opensea_link
@@ -289,6 +287,7 @@ module.exports = {
       if (holders.length > 0) {
         nft_holder = await nftHolderModel.updateNFTHolder(
           wallet_address,
+          opensea_link,
           holder_status
         );
       } else {

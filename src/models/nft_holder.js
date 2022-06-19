@@ -15,16 +15,16 @@ const nft_holders = {
     )[0];
   },
 
-  async updateNFTHolder(wallet_address, holder_status) {
+  async updateNFTHolder(wallet_address, opensea_link, holder_status) {
     await db.query(
-      "UPDATE nft_holder SET holder_status = ? WHERE wallet_address = ?",
-      [holder_status, wallet_address]
+      "UPDATE nft_holder SET holder_status = ? WHERE wallet_address = ? AND opensea_link = ?",
+      [holder_status, wallet_address, opensea_link]
     );
 
     return (
       await db.query(
-        "SELECT wallet_address, opensea_link, holder_status FROM nft_holder WHERE wallet_address = ?",
-        [wallet_address]
+        "SELECT wallet_address, opensea_link, holder_status FROM nft_holder WHERE wallet_address = ? AND opensea_link = ?",
+        [wallet_address, opensea_link]
       )
     )[0];
   },
