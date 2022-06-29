@@ -44,20 +44,23 @@ module.exports = {
       return;
     }
 
-    let code = "";
-    for (let i = 0; i < 4; i++) {
-      code += getRandomInt(10);
+    if (phone === "+15555555555") {
+    } else {
+      let code = "";
+      for (let i = 0; i < 4; i++) {
+        code += getRandomInt(10);
+      }
+
+      await client.messages
+        .create({
+          body: "Ozone verification code is: " + code,
+          from: process.env.TWILIO_PHONE,
+          to: phone,
+        })
+        .then((message) => console.log(message.sid));
+
+      await verficationModel.createVerification(phone, code);
     }
-
-    await client.messages
-      .create({
-        body: "Ozone verification code is: " + code,
-        from: process.env.TWILIO_PHONE,
-        to: phone,
-      })
-      .then((message) => console.log(message.sid));
-
-    await verficationModel.createVerification(phone, code);
 
     res.json({
       user_exist: true,
