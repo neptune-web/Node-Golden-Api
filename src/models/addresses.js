@@ -14,6 +14,16 @@ const addresses = {
     )[0];
   },
 
+  async updateAddress(address_id, wallet_address) {
+    await db.query("UPDATE addresses SET wallet_address = ? WHERE id = ?", [
+      wallet_address,
+      address_id,
+    ]);
+    return (
+      await db.query("SELECT * FROM addresses WHERE id = ?", [address_id])
+    )[0];
+  },
+
   async getAddress(user_id, wallet_address) {
     return (
       await db.query(

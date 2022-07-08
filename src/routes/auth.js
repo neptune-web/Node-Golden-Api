@@ -24,6 +24,11 @@ router.post(
   auth.signUp
 );
 router.post(
+  "/api/auth/registerWallet",
+  validate(authValidator.registerWallet, {}, {}),
+  auth.registerWallet
+);
+router.post(
   "/api/auth/verifyWalletAddress",
   checkToken,
   auth.verifyWalletAddress

@@ -10,6 +10,11 @@ module.exports = {
   signUp: {
     body: Joi.object({
       phone: Joi.string().required(),
+    }),
+  },
+  registerWallet: {
+    body: Joi.object({
+      phone: Joi.string().required(),
       wallet_address: Joi.string().required(),
     }),
   },

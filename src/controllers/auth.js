@@ -117,7 +117,6 @@ module.exports = {
           uid: user.user_id,
           userData: {
             userId: user.user_id,
-            walletAddress: user.wallet_address,
           },
         },
         JWT_SECRET_KEY,
@@ -173,7 +172,6 @@ module.exports = {
           uid: user.user_id,
           userData: {
             userId: user.user_id,
-            walletAddress: user.wallet_address,
           },
         },
         JWT_SECRET_KEY,
@@ -298,6 +296,47 @@ module.exports = {
     }
   },
 
+  async registerWallet(req, res) {
+    if (!has(req.body, ["phone"])) {
+      res.json({
+        message: "phone parameter is not defined",
+        status: status.BAD_REQUEST,
+      });
+      return;
+    }
+
+    const { phone, wallet_address } = req.body;
+
+    let existingUser = await userModel.getUser(phone);
+    let user;
+
+    if (existingUser?.user_id) user = existingUser;
+    else {
+      res.json({
+        register_wallet: false,
+        status: status.OK,
+      });
+      return;
+    }
+
+    if (user?.user_id) {
+      user = await addressesModel.updateAddress(
+        user?.wallet_address,
+        wallet_address
+      );
+
+      res.json({
+        register_wallet: true,
+        status: status.OK,
+      });
+    } else {
+      res.json({
+        register_wallet: false,
+        status: status.OK,
+      });
+    }
+  },
+
   async signUp(req, res) {
     if (!has(req.body, ["phone"])) {
       res.json({
@@ -306,15 +345,8 @@ module.exports = {
       });
       return;
     }
-    if (!has(req.body, ["wallet_address"])) {
-      res.json({
-        message: "wallet_address parameter is not defined",
-        status: status.BAD_REQUEST,
-      });
-      return;
-    }
     const userId = uuid();
-    const { phone, wallet_address } = req.body;
+    const { phone } = req.body;
 
     if (!validatePhoneNumber(phone)) {
       res.json({
@@ -334,19 +366,13 @@ module.exports = {
 
     if (user?.user_id) {
       let userId = user?.user_id;
-      let existingAddress = await addressesModel.getAddress(
-        userId,
-        wallet_address
-      );
+      let existingAddress = await addressesModel.getAddress(userId, "0x00");
 
       let addressId;
       if (existingAddress?.id) {
         addressId = existingAddress.id;
       } else {
-        let address = await addressesModel.createAddress(
-          user?.user_id,
-          wallet_address
-        );
+        let address = await addressesModel.createAddress(user?.user_id, "0x00");
         addressId = address.id;
       }
 
@@ -357,7 +383,6 @@ module.exports = {
           uid: user.user_id,
           userData: {
             userId: user.user_id,
-            walletAddress: user.wallet_address,
           },
         },
         JWT_SECRET_KEY,
