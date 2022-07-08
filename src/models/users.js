@@ -31,7 +31,7 @@ const users = {
   async getUserByPhone(phone) {
     return (
       await db.query(
-        "SELECT users.*, addresses.wallet_address FROM users INNER JOIN addresses ON users.user_id = addresses.user_id WHERE users.phone = ?",
+        "SELECT users.*, addresses.wallet_address FROM users INNER JOIN addresses ON users.wallet_address = addresses.id WHERE users.phone = ?",
         [phone]
       )
     )[0];
