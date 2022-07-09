@@ -14,8 +14,6 @@ function getRandomInt(max) {
 module.exports = {
   async createEvent(req, res) {
     const { user_id, name, link, date } = req.body;
-    //let token = req.headers["authorization"];
-    //let decoded = jwt.verify(token, JWT_SECRET_KEY);
     let userId = user_id;
     let qrcode = await QRCode.toDataURL(name);
 
