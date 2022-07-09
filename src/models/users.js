@@ -67,7 +67,7 @@ const users = {
   async getUserAddress(user_id) {
     return (
       await db.query(
-        "SELECT users.*, addresses.wallet_address FROM users INNER JOIN addresses ON users.user_id = addresses.user_id WHERE users.user_id = ?",
+        "SELECT users.*, addresses.wallet_address FROM users INNER JOIN addresses ON users.wallet_address = addresses.id WHERE users.user_id = ?",
         [user_id]
       )
     )[0];
