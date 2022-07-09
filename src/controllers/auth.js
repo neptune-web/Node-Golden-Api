@@ -366,17 +366,14 @@ module.exports = {
 
     if (user?.user_id) {
       let userId = user?.user_id;
-      let existingAddress = await addressesModel.getAddress(userId, "0x00");
-
       let addressId;
-      if (existingAddress?.id) {
-        addressId = existingAddress.id;
-      } else {
+      if (user?.wallet_address === 0) {
         let address = await addressesModel.createAddress(user?.user_id, "0x00");
         addressId = address.id;
+        user = await userModel.updateUserAddress(userId, addressId);
+      } else {
+        user = await userModel.getUserAddress(userId);
       }
-
-      user = await userModel.updateUserAddress(userId, addressId);
 
       const token = jwt.sign(
         {
