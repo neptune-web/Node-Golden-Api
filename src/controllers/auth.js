@@ -343,6 +343,7 @@ module.exports = {
     sendVerificationCode(phone)
 
     res.json({
+      sent: true,
       message: 'PIN code is sent.',
       status: status.OK,
     })
