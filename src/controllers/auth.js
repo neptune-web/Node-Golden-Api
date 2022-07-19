@@ -421,4 +421,69 @@ module.exports = {
       })
     }
   },
+
+  async deleteAccount(req, res) {
+    if (!has(req.body, ['phone'])) {
+      res.json({
+        message: 'phone parameter is not defined',
+        status: status.BAD_REQUEST,
+      })
+      return
+    }
+    const { phone } = req.body
+
+    if (!validatePhoneNumber(phone)) {
+      res.json({
+        message: 'phone is invalid',
+        status: status.BAD_REQUEST,
+      })
+      return
+    }
+
+    sendVerificationCode(phone)
+
+    res.json({
+      sent: true,
+      message: 'PIN code is sent.',
+      status: status.OK,
+    })
+  },
+
+  async confirmDeleteAccount(req, res) {
+    if (!has(req.body, ['phone', 'pin'])) {
+      res.status(status.BAD_REQUEST).json()
+      return
+    }
+
+    const { phone, pin, userId } = req.body
+    if (phone != '+15555555555') {
+      let code = await verficationModel.getVerificationCode(phone)
+
+      if (code !== pin) {
+        res.json({
+          verified_pin: false,
+          status: status.OK,
+        })
+        return
+      }
+
+      await verficationModel.removeVerification(phone)
+    }
+
+    let existingUser = await userModel.getUser(phone)
+    if (existingUser?.user_id) {
+      await userModel.deleteUser(userId)
+      res.json({
+        user_deleted: true,
+        message: 'User deleted successfully',
+        status: status.OK,
+      })
+    } else {
+      res.json({
+        user_deleted: false,
+        message: "User doesn't exist.",
+        status: status.OK,
+      })
+    }
+  },
 }

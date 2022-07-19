@@ -13,6 +13,12 @@ router.post('/api/auth/verifyOPT', validate(authValidator.verifyOPT, {}, {}), au
 router.post('/api/auth/verifyOPTWithWeb', auth.verifyOPTWithWeb)
 router.post('/api/auth/signUp', validate(authValidator.signUp, {}, {}), auth.signUp)
 router.post('/api/auth/confirmSignUp', validate(authValidator.confirmSignUp, {}, {}), auth.confirmSignUp)
+router.post('/api/auth/deleteAccount', validate(authValidator.deleteAccount, {}, {}), auth.deleteAccount)
+router.post(
+  '/api/auth/confirmDeleteAccount',
+  validate(authValidator.confirmDeleteAccount, {}, {}),
+  auth.confirmDeleteAccount
+)
 router.post('/api/auth/registerWallet', validate(authValidator.registerWallet, {}, {}), auth.registerWallet)
 router.post('/api/auth/verifyWalletAddress', checkToken, auth.verifyWalletAddress)
 router.post('/api/auth/validateAuthToken', validateAuthToken)

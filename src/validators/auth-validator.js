@@ -24,4 +24,16 @@ module.exports = {
       wallet_address: Joi.string().required(),
     }),
   },
+  deleteAccount: {
+    body: Joi.object({
+      phone: Joi.string().required(),
+    }),
+  },
+  confirmDeleteAccount: {
+    body: Joi.object({
+      phone: Joi.string().required(),
+      pin: Joi.string().required(),
+      userId: Joi.string().required(),
+    }),
+  },
 }
