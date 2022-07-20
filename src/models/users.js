@@ -23,6 +23,8 @@ const users = {
 
   async deleteUser(user_id) {
     await db.query('DELETE FROM users WHERE user_id = ?', [user_id])
+    await db.query('DELETE FROM events WHERE user_id = ?', [user_id])
+    await db.query('DELETE FROM addresses WHERE user_id = ?', [user_id])
   },
 
   async getUserByPhone(phone) {
